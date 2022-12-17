@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 
 public class VersionDatabase {
 
-	public static final String MAVEN_URL = "https://maven.fabricmc.net/";
+	public static final String MAVEN_URL = "https://maven.fabric.rizecookey.net/";
 
 	public static final PomParser MAPPINGS_PARSER = new PomParser(MAVEN_URL + "net/fabricmc/yarn/maven-metadata.xml");
 	public static final PomParser INTERMEDIARY_PARSER = new PomParser(MAVEN_URL + "net/fabricmc/intermediary/maven-metadata.xml");
