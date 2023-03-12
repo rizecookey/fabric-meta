@@ -45,7 +45,7 @@ public class MinecraftLauncherMeta {
 	}
 
 	public static MinecraftLauncherMeta getExperimentalMeta() throws IOException {
-		String url = "https://maven.fabricmc.net/net/minecraft/experimental_versions.json";
+		String url = "https://nexus.rizecookey.net/repository/minecraft-data/net/minecraft/experimental_versions.json";
 		String json = IOUtils.toString(new URL(url), StandardCharsets.UTF_8);
 		return GSON.fromJson(json, MinecraftLauncherMeta.class);
 	}
