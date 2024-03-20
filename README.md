@@ -1,3 +1,6 @@
+# ARCHIVED
+[fabric-meta](https://github.com/FabricMC/fabric-meta) itself now allows setting custom local maven URLs via a config file, so this fork is no longer needed.
+
 # fabric-meta
 
 Fabric Meta is a JSON HTTP API that can be used to query meta data about Fabric's projects. It is updated every 5 mins.
