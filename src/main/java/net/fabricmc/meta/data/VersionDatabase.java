@@ -16,13 +16,8 @@
 
 package net.fabricmc.meta.data;
 
-import net.fabricmc.meta.utils.MinecraftLauncherMeta;
-import net.fabricmc.meta.utils.PomParser;
-import net.fabricmc.meta.web.models.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static net.fabricmc.meta.utils.Reference.LOCAL_FABRIC_MAVEN_URL;
 
-import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,14 +25,24 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.xml.stream.XMLStreamException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import net.fabricmc.meta.utils.MinecraftLauncherMeta;
+import net.fabricmc.meta.utils.PomParser;
+import net.fabricmc.meta.web.models.BaseVersion;
+import net.fabricmc.meta.web.models.MavenBuildGameVersion;
+import net.fabricmc.meta.web.models.MavenBuildVersion;
+import net.fabricmc.meta.web.models.MavenUrlVersion;
+import net.fabricmc.meta.web.models.MavenVersion;
+
 public class VersionDatabase {
-
-	public static final String MAVEN_URL = "https://maven.fabric.rizecookey.net/";
-
-	public static final PomParser MAPPINGS_PARSER = new PomParser(MAVEN_URL + "net/fabricmc/yarn/maven-metadata.xml");
-	public static final PomParser INTERMEDIARY_PARSER = new PomParser(MAVEN_URL + "net/fabricmc/intermediary/maven-metadata.xml");
-	public static final PomParser LOADER_PARSER = new PomParser(MAVEN_URL + "net/fabricmc/fabric-loader/maven-metadata.xml");
-	public static final PomParser INSTALLER_PARSER = new PomParser(MAVEN_URL + "net/fabricmc/fabric-installer/maven-metadata.xml");
+	public static final PomParser MAPPINGS_PARSER = new PomParser(LOCAL_FABRIC_MAVEN_URL + "net/fabricmc/yarn/maven-metadata.xml");
+	public static final PomParser INTERMEDIARY_PARSER = new PomParser(LOCAL_FABRIC_MAVEN_URL + "net/fabricmc/intermediary/maven-metadata.xml");
+	public static final PomParser LOADER_PARSER = new PomParser(LOCAL_FABRIC_MAVEN_URL + "net/fabricmc/fabric-loader/maven-metadata.xml");
+	public static final PomParser INSTALLER_PARSER = new PomParser(LOCAL_FABRIC_MAVEN_URL + "net/fabricmc/fabric-installer/maven-metadata.xml");
 
 	private static final ArrayList<String> incorrectVersions = new ArrayList<>();
 	private static final Logger LOGGER = LoggerFactory.getLogger(VersionDatabase.class);
@@ -74,6 +79,7 @@ public class VersionDatabase {
 		if (mappings == null || intermediary == null) {
 			throw new RuntimeException("Mappings are null");
 		}
+
 		MinecraftLauncherMeta launcherMeta = MinecraftLauncherMeta.getAllMeta();
 
 		//Sorts in the order of minecraft release dates
@@ -89,12 +95,15 @@ public class VersionDatabase {
 					LOGGER.warn("Removing {} as it doesn't match a valid mc version", o.getVersion());
 					incorrectVersions.add(o.getVersion());
 				}
+
 				return true;
 			}
+
 			return false;
 		});
 
 		List<String> minecraftVersions = new ArrayList<>();
+
 		for (MavenVersion gameVersion : intermediary) {
 			if (!minecraftVersions.contains(gameVersion.getVersion())) {
 				minecraftVersions.add(gameVersion.getVersion());
@@ -107,7 +116,7 @@ public class VersionDatabase {
 	public List<MavenBuildVersion> getLoader() {
 		return loader.stream().filter(VersionDatabase::isPublicLoaderVersion).collect(Collectors.toList());
 	}
-	
+
 	private static boolean isPublicLoaderVersion(BaseVersion version) {
 		return true;
 	}

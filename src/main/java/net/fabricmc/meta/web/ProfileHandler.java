@@ -35,11 +35,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.apache.commons.io.IOUtils;
 
-import net.fabricmc.meta.utils.LoaderMeta;
+import net.fabricmc.meta.utils.Reference;
 import net.fabricmc.meta.web.models.LoaderInfoV2;
 
 public class ProfileHandler {
-
 	private static final Executor EXECUTOR = Executors.newFixedThreadPool(2);
 	private static final DateFormat ISO_8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
 
@@ -75,13 +74,13 @@ public class ProfileHandler {
 				.thenApply(inputStream -> packageZip(info, inputStream));
 	}
 
-	private static InputStream packageZip(LoaderInfoV2 info, InputStream profileJson)  {
+	private static InputStream packageZip(LoaderInfoV2 info, InputStream profileJson) {
 		String profileName = String.format("fabric-loader-%s-%s", info.getLoader().getVersion(), info.getIntermediary().getVersion());
 
 		try {
 			ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 
-			try (ZipOutputStream zipStream = new ZipOutputStream(byteArrayOutputStream))  {
+			try (ZipOutputStream zipStream = new ZipOutputStream(byteArrayOutputStream)) {
 				//Write the profile json
 				zipStream.putNextEntry(new ZipEntry(profileName + "/" + profileName + ".json"));
 				IOUtils.copy(profileJson, zipStream);
@@ -113,8 +112,8 @@ public class ProfileHandler {
 		JsonObject librariesObject = launcherMeta.get("libraries").getAsJsonObject();
 		// Build the libraries array with the existing libs + loader and intermediary
 		JsonArray libraries = (JsonArray) librariesObject.get("common");
-		libraries.add(getLibrary(info.getIntermediary().getMaven(), LoaderMeta.MAVEN_URL));
-		libraries.add(getLibrary(info.getLoader().getMaven(), LoaderMeta.MAVEN_URL));
+		libraries.add(formatLibrary(info.getIntermediary().getMaven(), Reference.FABRIC_MAVEN_URL));
+		libraries.add(formatLibrary(info.getLoader().getMaven(), Reference.FABRIC_MAVEN_URL));
 
 		if (librariesObject.has(side)) {
 			libraries.addAll(librariesObject.get(side).getAsJsonArray());
@@ -159,7 +158,7 @@ public class ProfileHandler {
 		return profile;
 	}
 
-	private static JsonObject getLibrary(String mavenPath, String url) {
+	private static JsonObject formatLibrary(String mavenPath, String url) {
 		JsonObject jsonObject = new JsonObject();
 		jsonObject.addProperty("name", mavenPath);
 		jsonObject.addProperty("url", url);
