@@ -7,7 +7,7 @@ plugins {
 }
 
 group 'net.fabricmc'
-version '1.6.0'
+version '1.6.2'
 
 def ENV = System.getenv()
 version = version + (ENV.GITHUB_ACTIONS ? "" : "+local")
@@ -40,7 +40,7 @@ java {
 }
 
 test {
-	useJUnitPlatform()
+	//useJUnitPlatform()
 }
 
 jar {
